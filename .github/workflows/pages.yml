@@ -28,6 +28,8 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
+      - name: TypeScript check
+        run: npm run lint
       - name: Build
         run: npm run build
       - name: Upload Pages artifact
