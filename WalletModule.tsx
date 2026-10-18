@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BLOCKCHAIN_NETWORKS, INITIAL_WALLET_ASSETS } from './mockData';
+import { BLOCKCHAIN_NETWORKS } from './mockData';
 import { BlockchainNetwork, WalletAsset } from './index';
 import {
   Wallet,
@@ -22,13 +22,14 @@ import {
 
 interface WalletModuleProps {
   lang: 'ar' | 'en';
+  walletAddress: string | null;
 }
 
-export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
+export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress }) => {
   const isAr = lang === 'ar';
 
   const [selectedNetwork, setSelectedNetwork] = useState<BlockchainNetwork>(BLOCKCHAIN_NETWORKS[0]);
-  const [assets, setAssets] = useState<WalletAsset[]>(INITIAL_WALLET_ASSETS);
+  const [assets, setAssets] = useState<WalletAsset[]>([]);
   const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | 'backup' | null>(null);
   
   // Send state
@@ -46,7 +47,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
 
   // Backup seed phrase reveal state
   const [showSeed, setShowSeed] = useState(false);
-  const seedWords = ['alpha', 'matrix', 'crystal', 'quantum', 'harbor', 'nebula', 'shield', 'falcon', 'summit', 'voyage', 'horizon', 'zenith'];
+  const seedWords: string[] = [];
 
   // Total balance computation
   const totalBalanceUSD = assets.reduce((acc, curr) => acc + (curr.balance * curr.priceUSD), 0);
@@ -116,7 +117,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             <p className="text-xs text-slate-400 mt-2 flex items-center gap-2">
               <span>{isAr ? 'العنوان الرئيسي المشفر:' : 'Master Vault Address:'}</span>
               <span className="font-mono text-slate-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                0x71C35B9e01B93A2eA982C991448bFaFa98324e92
+                {walletAddress ?? (isAr ? 'لم يتم ربط محفظة' : 'No wallet connected')}
               </span>
             </p>
           </div>
@@ -125,6 +126,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setActiveModal('send')}
+              disabled
+              title={isAr ? 'سيتم تفعيل التحويل بعد تنفيذ معاملات بلوكتشين حقيقية' : 'Sending will be enabled after real on-chain transactions are implemented'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-lg shadow-indigo-600/20 transition active:scale-95"
             >
               <ArrowUpRight className="w-4 h-4" />
@@ -139,6 +142,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </button>
             <button
               onClick={() => setActiveModal('swap')}
+              disabled
+              title={isAr ? 'سيتم تفعيل التبديل بعد ربط بروتوكول DEX حقيقي' : 'Swap will be enabled after a real DEX integration'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs transition active:scale-95"
             >
               <RefreshCw className="w-4 h-4 text-cyan-400" />
@@ -146,6 +151,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </button>
             <button
               onClick={() => setActiveModal('backup')}
+              disabled
+              title={isAr ? 'عبارة الاسترداد تبقى داخل محفظتك الخارجية' : 'Recovery phrase stays in your external wallet'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-500/30 font-semibold text-xs transition"
             >
               <Key className="w-4 h-4 text-amber-400" />
@@ -153,6 +160,12 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs leading-6 text-amber-100">
+        {isAr
+          ? 'تنبيه: تم تفعيل واجهة الاتصال بالمحفظة فقط. الأرصدة والتحويلات والتبديل متعدد الشبكات لم تُربط بعد ببيانات بلوكتشين حقيقية، لذلك أوقفنا هذه الإجراءات مؤقتًا لحمايتك.'
+          : 'Notice: wallet connection UI is enabled only. Live balances, transfers, and multi-chain swaps are not yet connected to blockchain data, so these actions are temporarily disabled for your safety.'}
       </div>
 
       {/* Network Selector Bar (The 10 major active networks) */}
@@ -163,7 +176,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             <span>{isAr ? 'الشبكات النشطة المدعومة (10 شبكات بلوكتشين)' : 'Active Multi-Chain Networks (10 Protocols)'}</span>
           </h3>
           <span className="text-xs text-slate-400 font-mono">
-            RPC Node Status: <span className="text-emerald-400 font-bold">All Healthy</span>
+            {isAr ? 'حالة الاتصال:' : 'Connection status:'} <span className={walletAddress ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>{walletAddress ? (isAr ? 'متصل' : 'Connected') : (isAr ? 'غير متصل' : 'Not connected')}</span>
           </span>
         </div>
 
@@ -534,14 +547,14 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 <div className="flex flex-col items-center justify-center py-6 space-y-2">
                   <Lock className="w-8 h-8 text-slate-600" />
                   <span className="text-xs text-slate-400">
-                    {isAr ? 'الكلمات مشفرة ومحجوبة لأسباب أمنية' : 'Phrase is encrypted for safety'}
+                    {isAr ? 'عبارة الاسترداد لا تنشئها WEB3ONE ولا تخزنها. افتح محفظتك الخارجية لإدارتها بأمان.' : 'WEB3ONE does not create or store your recovery phrase. Manage it securely inside your external wallet.'}
                   </span>
                   <button
                     onClick={() => setShowSeed(true)}
                     className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>{isAr ? 'إظهار الكلمات' : 'Reveal Words'}</span>
+                    <span>{isAr ? 'افتح المحفظة الخارجية' : 'Open external wallet'}</span>
                   </button>
                 </div>
               ) : (
@@ -561,7 +574,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 onClick={() => setShowSeed(false)}
                 className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition"
               >
-                {isAr ? 'إخفاء الكلمات مجدداً' : 'Hide Seed Phrase'}
+                {isAr ? 'إغلاق' : 'Close'}
               </button>
             )}
           </div>
