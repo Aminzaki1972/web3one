@@ -115,7 +115,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress 
               ${totalBalanceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-xs text-slate-400 mt-2 flex items-center gap-2">
-              <span>{isAr ? 'العنوان الرئيسي المشفر:' : 'Master Vault Address:'}</span>
+              <span>{isAr ? 'عنوان محفظتك المتصلة:' : 'Connected wallet address:'}</span>
               <span className="font-mono text-slate-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
                 {walletAddress ?? (isAr ? 'لم يتم ربط محفظة' : 'No wallet connected')}
               </span>
@@ -402,12 +402,12 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress 
             </div>
 
             <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 mb-4 text-xs font-mono text-slate-300 break-all select-all">
-              0x71C35B9e01B93A2eA982C991448bFaFa98324e92
+              {walletAddress ?? (isAr ? 'اربط محفظتك أولاً' : 'Connect a wallet first')}
             </div>
 
             <button
               onClick={() => {
-                navigator.clipboard.writeText('0x71C35B9e01B93A2eA982C991448bFaFa98324e92');
+                if (walletAddress) navigator.clipboard.writeText(walletAddress);
                 alert(isAr ? 'تم نسخ العنوان إلى الحافظة' : 'Address copied to clipboard');
               }}
               className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition flex items-center justify-center gap-2 text-xs"
