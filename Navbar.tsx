@@ -125,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
                 <span className="text-slate-600">|</span>
                 <span className="font-mono text-emerald-400 font-bold tabular-nums">
-                  ${totalBalanceUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  {isAr ? 'متصل' : 'Connected'}
                 </span>
               </div>
             ) : (
