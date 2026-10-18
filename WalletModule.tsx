@@ -135,6 +135,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress 
             </button>
             <button
               onClick={() => setActiveModal('receive')}
+              disabled
+              title={isAr ? 'سيتم تفعيل الاستلام بعد إنشاء QR حقيقي والتحقق من الشبكة' : 'Receive will be enabled after real QR generation and network verification'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-600/20 transition active:scale-95"
             >
               <ArrowDownLeft className="w-4 h-4" />
