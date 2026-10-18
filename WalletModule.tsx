@@ -23,10 +23,14 @@ import {
 interface WalletModuleProps {
   lang: 'ar' | 'en';
   walletAddress: string | null;
+  chainId: string | null;
+  nativeBalance: string | null;
 }
 
-export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress }) => {
+export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress, chainId, nativeBalance }) => {
   const isAr = lang === 'ar';
+  const chainNames: Record<string, string> = { '0x1': 'Ethereum', '0x38': 'BNB Smart Chain', '0x89': 'Polygon', '0xa4b1': 'Arbitrum One', '0xa': 'Optimism', '0x2105': 'Base', '0xaa36a7': 'Sepolia Testnet', '0x61': 'BNB Testnet' };
+  const activeChainName = chainId ? (chainNames[chainId.toLowerCase()] ?? 'Unknown network') : 'Not connected';
 
   const [selectedNetwork, setSelectedNetwork] = useState<BlockchainNetwork>(BLOCKCHAIN_NETWORKS[0]);
   const [assets, setAssets] = useState<WalletAsset[]>([]);
@@ -170,15 +174,15 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress 
           : 'Notice: wallet connection UI is enabled only. Live balances, transfers, and multi-chain swaps are not yet connected to blockchain data, so these actions are temporarily disabled for your safety.'}
       </div>
 
-      {/* Network Selector Bar (The 10 major active networks) */}
+      {/* Current injected-wallet network; network switching is not yet enabled. */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Layers className="w-4 h-4 text-indigo-400" />
-            <span>{isAr ? 'الشبكات النشطة المدعومة (10 شبكات بلوكتشين)' : 'Active Multi-Chain Networks (10 Protocols)'}</span>
+            <span>{isAr ? 'الشبكة الحالية للمحفظة' : 'Current wallet network'}</span>
           </h3>
           <span className="text-xs text-slate-400 font-mono">
-            {isAr ? 'حالة الاتصال:' : 'Connection status:'} <span className={walletAddress ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>{walletAddress ? (isAr ? 'متصل' : 'Connected') : (isAr ? 'غير متصل' : 'Not connected')}</span>
+            {isAr ? 'الشبكة:' : 'Network:'} <span className={walletAddress ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>{walletAddress ? activeChainName : (isAr ? 'غير متصل' : 'Not connected')}</span>
           </span>
         </div>
 
@@ -211,6 +215,12 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress 
             );
           })}
         </div>
+      </div>
+
+      <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+        <div className="text-xs text-slate-400">{isAr ? 'الرصيد الأصلي على الشبكة الحالية' : 'Native balance on current network'}</div>
+        <div className="mt-1 text-lg font-bold text-white">{walletAddress ? (nativeBalance === null ? (isAr ? 'غير متاح حاليًا' : 'Unavailable') : nativeBalance) : (isAr ? 'اربط المحفظة أولاً' : 'Connect wallet first')}</div>
+        <div className="text-xs text-slate-500 mt-1">{activeChainName} · {chainId ?? '—'}</div>
       </div>
 
       {/* Assets Breakdown Table */}
