@@ -4,7 +4,9 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [fix/web3one-blank-page]
+    branches:
+      - fix/web3one-blank-page
+      - feat/real-wallet-connect
 
 jobs:
   build:
