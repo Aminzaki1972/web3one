@@ -57,6 +57,10 @@ export default function App() {
       setChainId(activeChain);
     } catch (error) {
       console.error('Wallet connection was not completed', error);
+      const message = error && typeof error === 'object' && 'code' in error && error.code === 4001
+        ? (lang === 'ar' ? 'تم رفض طلب ربط المحفظة. يمكنك المحاولة مرة أخرى عند الاستعداد.' : 'Wallet connection was rejected. You can try again when ready.')
+        : (lang === 'ar' ? 'تعذر ربط المحفظة. تحقق من فتح التطبيق داخل متصفح المحفظة ثم أعد المحاولة.' : 'Could not connect wallet. Open the app in your wallet browser and try again.');
+      alert(message);
     }
   };
 
