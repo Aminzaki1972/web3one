@@ -39,6 +39,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<SuperAppTab>('wallet');
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [chainId, setChainId] = useState<string | null>(null);
+  const [nativeBalance, setNativeBalance] = useState<string | null>(null);
   const walletConnected = Boolean(walletAddress);
 
   const connectWallet = async () => {
@@ -51,6 +53,8 @@ export default function App() {
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }) as string[];
       setWalletAddress(accounts?.[0] ?? null);
+      const activeChain = await window.ethereum.request({ method: 'eth_chainId' }) as string;
+      setChainId(activeChain);
     } catch (error) {
       console.error('Wallet connection was not completed', error);
     }
@@ -63,9 +67,31 @@ export default function App() {
       const accounts = args[0] as string[] | undefined;
       setWalletAddress(accounts?.[0] ?? null);
     };
+    const handleChainChanged = (...args: unknown[]) => setChainId(args[0] as string);
     provider.on?.('accountsChanged', handleAccountsChanged);
-    return () => provider.removeListener?.('accountsChanged', handleAccountsChanged);
+    provider.on?.('chainChanged', handleChainChanged);
+    return () => {
+      provider.removeListener?.('accountsChanged', handleAccountsChanged);
+      provider.removeListener?.('chainChanged', handleChainChanged);
+    };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const provider = window.ethereum;
+    if (!provider || !walletAddress) {
+      setNativeBalance(null);
+      return;
+    }
+    provider.request({ method: 'eth_getBalance', params: [walletAddress, 'latest'] })
+      .then((value) => {
+        if (cancelled) return;
+        const wei = BigInt(value as string);
+        setNativeBalance((Number(wei) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }));
+      })
+      .catch(() => { if (!cancelled) setNativeBalance(null); });
+    return () => { cancelled = true; };
+  }, [walletAddress, chainId]);
 
   const isAr = lang === 'ar';
   const totalBalanceUSD = 0;
@@ -92,7 +118,7 @@ export default function App() {
       {/* Main Viewport Content Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'wallet' && (
-          <WalletModule lang={lang} walletAddress={walletAddress} />
+          <WalletModule lang={lang} walletAddress={walletAddress} chainId={chainId} nativeBalance={nativeBalance} />
         )}
 
         {activeTab === 'markets' && (
