@@ -54,53 +54,18 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
 
   // Total balance computation
 
-  // Handle Send action
+  // Safety guard: never simulate a blockchain transfer or show false success.
   const handleExecuteSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sendRecipient || !sendAmount) return;
-    const numAmt = parseFloat(sendAmount);
-    setAssets(prev => prev.map(a => {
-      if (a.symbol === sendSymbol) {
-        return { ...a, balance: Math.max(0, a.balance - numAmt) };
-      }
-      return a;
-    }));
-    setSendSuccess(true);
-    setTimeout(() => {
-      setSendSuccess(false);
-      setActiveModal(null);
-      setSendAmount('');
-      setSendRecipient('');
-    }, 2000);
+    setSendSuccess(false);
+    setActiveModal(null);
   };
 
-  // Handle Swap action
+  // Safety guard: swaps stay unavailable until a real DEX transaction flow is integrated.
   const handleExecuteSwap = () => {
-    setIsSwapping(true);
-    setTimeout(() => {
-      const fromAsset = assets.find(a => a.symbol === swapFrom);
-      const toAsset = assets.find(a => a.symbol === swapTo);
-      if (fromAsset && toAsset) {
-        const fromValUSD = parseFloat(swapAmount) * fromAsset.priceUSD;
-        const toAmt = fromValUSD / toAsset.priceUSD;
-
-        setAssets(prev => prev.map(a => {
-          if (a.symbol === swapFrom) {
-            return { ...a, balance: Math.max(0, a.balance - parseFloat(swapAmount)) };
-          }
-          if (a.symbol === swapTo) {
-            return { ...a, balance: a.balance + toAmt };
-          }
-          return a;
-        }));
-      }
-      setIsSwapping(false);
-      setSwapComplete(true);
-      setTimeout(() => {
-        setSwapComplete(false);
-        setActiveModal(null);
-      }, 1500);
-    }, 1200);
+    setIsSwapping(false);
+    setSwapComplete(false);
+    setActiveModal(null);
   };
 
   return (
