@@ -4,7 +4,7 @@ import {
   GLOBAL_STOCKS,
   BOND_YIELDS,
   GLOBAL_COMMODITIES
-} from '../data/mockData';
+} from './mockData';
 import {
   TrendingUp,
   BarChart3,
