@@ -1,0 +1,6 @@
+{
+  "name": "Web3Market Audit & Valuation Engine",
+  "description": "فحص وتقييم فني ومالي شامل لمنصة web3market.xyz وتقييم الأكواد، النطاق، والجدوى الاستثمارية",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
