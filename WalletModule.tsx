@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BLOCKCHAIN_NETWORKS } from './mockData';
-import { BlockchainNetwork, WalletAsset } from './index';
+import { WalletAsset } from './index';
 import {
   Wallet,
   ArrowUpRight,
@@ -32,7 +31,6 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
   const chainNames: Record<string, string> = { '0x1': 'Ethereum', '0x38': 'BNB Smart Chain', '0x89': 'Polygon', '0xa4b1': 'Arbitrum One', '0xa': 'Optimism', '0x2105': 'Base', '0xaa36a7': 'Sepolia Testnet', '0x61': 'BNB Testnet' };
   const activeChainName = chainId ? (chainNames[chainId.toLowerCase()] ?? 'Unknown network') : 'Not connected';
 
-  const [selectedNetwork, setSelectedNetwork] = useState<BlockchainNetwork>(BLOCKCHAIN_NETWORKS[0]);
   const [assets, setAssets] = useState<WalletAsset[]>([]);
   const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | 'backup' | null>(null);
   
@@ -54,7 +52,6 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
   const seedWords: string[] = [];
 
   // Total balance computation
-  const totalBalanceUSD = assets.reduce((acc, curr) => acc + (curr.balance * curr.priceUSD), 0);
 
   // Handle Send action
   const handleExecuteSend = (e: React.FormEvent) => {
@@ -115,8 +112,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
               <ShieldCheck className="w-4 h-4" />
               <span>{isAr ? 'محفظة لا مركزية ذاتية الحفظ (Non-Custodial Multi-Chain)' : 'Non-Custodial Multi-Chain Engine'}</span>
             </div>
-            <div className="text-3xl lg:text-5xl font-black text-white font-mono tracking-tight tabular-nums">
-              ${totalBalanceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <div className="text-2xl lg:text-3xl font-black text-white tracking-tight">
+              {walletAddress ? (isAr ? 'المحفظة متصلة' : 'Wallet connected') : (isAr ? 'المحفظة غير متصلة' : 'Wallet not connected')}
             </div>
             <p className="text-xs text-slate-400 mt-2 flex items-center gap-2">
               <span>{isAr ? 'عنوان محفظتك المتصلة:' : 'Connected wallet address:'}</span>
@@ -185,37 +182,6 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
             {isAr ? 'الشبكة:' : 'Network:'} <span className={walletAddress ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>{walletAddress ? activeChainName : (isAr ? 'غير متصل' : 'Not connected')}</span>
           </span>
         </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {BLOCKCHAIN_NETWORKS.map((net) => {
-            const isSelected = selectedNetwork.id === net.id;
-            return (
-              <button
-                key={net.id}
-                onClick={() => setSelectedNetwork(net)}
-                className={`p-3 rounded-xl border text-left transition flex items-center justify-between ${
-                  isSelected
-                    ? 'bg-indigo-950/40 border-indigo-500/60 shadow-md shadow-indigo-950/40'
-                    : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
-                }`}
-              >
-                <div>
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: net.color }}></span>
-                    <span className="truncate max-w-[100px]">{net.name}</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400 font-mono mt-0.5">
-                    Gas: {net.gasPriceGwei} gwei
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono font-bold text-indigo-400 uppercase">
-                  {net.nativeSymbol}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
         <div className="text-xs text-slate-400">{isAr ? 'الرصيد الأصلي على الشبكة الحالية' : 'Native balance on current network'}</div>
