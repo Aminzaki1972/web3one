@@ -257,13 +257,12 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
                     </td>
                     <td className="py-3 px-6 text-center">
                       <button
-                        onClick={() => {
-                          setSendSymbol(asset.symbol);
-                          setActiveModal('send');
-                        }}
-                        className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono transition"
+                        type="button"
+                        disabled
+                        title={isAr ? 'التحويل الحقيقي غير مفعّل بعد' : 'Real on-chain transfers are not enabled yet'}
+                        className="px-2.5 py-1 rounded bg-slate-800/50 text-slate-500 text-xs font-mono cursor-not-allowed"
                       >
-                        {isAr ? 'إرسال' : 'Send'}
+                        {isAr ? 'غير متاح' : 'Unavailable'}
                       </button>
                     </td>
                   </tr>
