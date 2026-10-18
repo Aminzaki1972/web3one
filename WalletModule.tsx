@@ -152,7 +152,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
 
       <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
         <div className="text-xs text-slate-400">{isAr ? 'الرصيد الأصلي على الشبكة الحالية' : 'Native balance on current network'}</div>
-        <div className="mt-1 text-lg font-bold text-white">{walletAddress ? (nativeBalance === null ? (isAr ? 'غير متاح حاليًا' : 'Unavailable') : nativeBalance) : (isAr ? 'اربط المحفظة أولاً' : 'Connect wallet first')}</div>
+        <div className="mt-1 text-lg font-bold text-white">{walletAddress ? (nativeBalance === null ? (isAr ? 'غير متاح حاليًا' : 'Unavailable') : `${nativeBalance}${nativeSymbol ? ` ${nativeSymbol}` : ''}`) : (isAr ? 'اربط المحفظة أولاً' : 'Connect wallet first')}</div>
         <div className="text-xs text-slate-500 mt-1">{activeChainName} · {chainId ?? '—'}</div>
       </div>
 
