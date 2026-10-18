@@ -60,12 +60,13 @@ export default function App() {
           : 'The wallet did not return a valid account address. Select an account in your wallet and try again.');
         return;
       }
-      setWalletAddress(account);
       const activeChain = await window.ethereum.request({ method: 'eth_chainId' }) as string;
       if (typeof activeChain !== 'string' || !/^0x[0-9a-fA-F]+$/.test(activeChain)) {
+        setWalletAddress(null);
         setChainId(null);
         throw new Error('Wallet returned an invalid chain ID');
       }
+      setWalletAddress(account);
       setChainId(activeChain);
     } catch (error) {
       console.error('Wallet connection was not completed', error);
@@ -82,17 +83,22 @@ export default function App() {
 
     let cancelled = false;
     const handleAccountsChanged = (...args: unknown[]) => {
-      const accounts = args[0] as string[] | undefined;
-      setWalletAddress(accounts?.[0] ?? null);
+      const accounts = args[0] as unknown;
+      const account = Array.isArray(accounts) ? accounts[0] : undefined;
+      setWalletAddress(typeof account === 'string' && /^0x[a-fA-F0-9]{40}$/.test(account) ? account : null);
     };
-    const handleChainChanged = (...args: unknown[]) => setChainId(args[0] as string);
+    const handleChainChanged = (...args: unknown[]) => {
+      const nextChain = args[0];
+      setChainId(typeof nextChain === 'string' && /^0x[0-9a-fA-F]+$/.test(nextChain) ? nextChain : null);
+    };
 
     // Restore an already-authorized connection silently; never trigger a wallet prompt on page load.
     provider.request({ method: 'eth_accounts' })
       .then((value) => {
         if (cancelled) return;
-        const accounts = value as string[];
-        setWalletAddress(accounts?.[0] ?? null);
+        const accounts = value as unknown;
+        const account = Array.isArray(accounts) ? accounts[0] : undefined;
+        setWalletAddress(typeof account === 'string' && /^0x[a-fA-F0-9]{40}$/.test(account) ? account : null);
       })
       .catch(() => {
         if (!cancelled) setWalletAddress(null);
@@ -100,7 +106,7 @@ export default function App() {
 
     provider.request({ method: 'eth_chainId' })
       .then((value) => {
-        if (!cancelled) setChainId(value as string);
+        if (!cancelled) setChainId(typeof value === 'string' && /^0x[0-9a-fA-F]+$/.test(value) ? value : null);
       })
       .catch(() => {
         if (!cancelled) setChainId(null);
