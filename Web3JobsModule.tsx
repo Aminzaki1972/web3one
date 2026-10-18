@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { WEB3_JOB_LISTINGS } from '../data/mockData';
-import { Web3JobListing } from '../types';
+import { WEB3_JOB_LISTINGS } from './mockData';
+import { Web3JobListing } from './index';
 import {
   Briefcase,
   Globe,
