@@ -67,14 +67,37 @@ export default function App() {
   useEffect(() => {
     const provider = window.ethereum;
     if (!provider) return;
+
+    let cancelled = false;
     const handleAccountsChanged = (...args: unknown[]) => {
       const accounts = args[0] as string[] | undefined;
       setWalletAddress(accounts?.[0] ?? null);
     };
     const handleChainChanged = (...args: unknown[]) => setChainId(args[0] as string);
+
+    // Restore an already-authorized connection silently; never trigger a wallet prompt on page load.
+    provider.request({ method: 'eth_accounts' })
+      .then((value) => {
+        if (cancelled) return;
+        const accounts = value as string[];
+        setWalletAddress(accounts?.[0] ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setWalletAddress(null);
+      });
+
+    provider.request({ method: 'eth_chainId' })
+      .then((value) => {
+        if (!cancelled) setChainId(value as string);
+      })
+      .catch(() => {
+        if (!cancelled) setChainId(null);
+      });
+
     provider.on?.('accountsChanged', handleAccountsChanged);
     provider.on?.('chainChanged', handleChainChanged);
     return () => {
+      cancelled = true;
       provider.removeListener?.('accountsChanged', handleAccountsChanged);
       provider.removeListener?.('chainChanged', handleChainChanged);
     };
