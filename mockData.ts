@@ -12,7 +12,7 @@ import {
   MovieShow,
   Web3ProjectListing,
   Web3JobListing
-} from '../types';
+} from './index';
 
 export const WEB3_JOB_LISTINGS: Web3JobListing[] = [
   {
