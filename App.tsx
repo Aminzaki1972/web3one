@@ -52,8 +52,20 @@ export default function App() {
     }
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }) as string[];
-      setWalletAddress(accounts?.[0] ?? null);
+      const account = Array.isArray(accounts) ? accounts[0] : undefined;
+      if (typeof account !== 'string' || !/^0x[a-fA-F0-9]{40}$/.test(account)) {
+        setWalletAddress(null);
+        alert(lang === 'ar'
+          ? 'لم تُرجع المحفظة عنوان حساب صالحًا. تحقق من اختيار حساب في المحفظة ثم أعد المحاولة.'
+          : 'The wallet did not return a valid account address. Select an account in your wallet and try again.');
+        return;
+      }
+      setWalletAddress(account);
       const activeChain = await window.ethereum.request({ method: 'eth_chainId' }) as string;
+      if (typeof activeChain !== 'string' || !/^0x[0-9a-fA-F]+$/.test(activeChain)) {
+        setChainId(null);
+        throw new Error('Wallet returned an invalid chain ID');
+      }
       setChainId(activeChain);
     } catch (error) {
       console.error('Wallet connection was not completed', error);
