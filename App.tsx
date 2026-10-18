@@ -256,7 +256,7 @@ export default function App() {
             </a>
             <span>•</span>
             <span className="hover:text-indigo-400 cursor-pointer" onClick={() => setActiveTab('wallet')}>
-              {isAr ? '10 شبكات' : '10 Chains'}
+              {isAr ? 'اتصال EVM تجريبي' : 'EVM Connection Beta'}
             </span>
             <span>•</span>
             <span className="hover:text-cyan-400 cursor-pointer" onClick={() => setActiveTab('web3market')}>
