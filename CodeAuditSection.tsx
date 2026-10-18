@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Code, ShieldCheck, AlertCircle, CheckCircle, Terminal, Layers, Lock, Cpu, Database, Network, ChevronDown, ChevronUp, FileCode } from 'lucide-react';
-import { SECURITY_CHECKS, TECHNICAL_SCORES } from '../data/auditData';
+import { SECURITY_CHECKS, TECHNICAL_SCORES } from './auditData';
 
 interface CodeAuditSectionProps {
   lang: 'ar' | 'en';

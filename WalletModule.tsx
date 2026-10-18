@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BLOCKCHAIN_NETWORKS, INITIAL_WALLET_ASSETS } from './mockData';
-import { BlockchainNetwork, WalletAsset } from './index';
+import { WalletAsset } from './index';
 import {
   Wallet,
   ArrowUpRight,
@@ -22,13 +21,19 @@ import {
 
 interface WalletModuleProps {
   lang: 'ar' | 'en';
+  walletAddress: string | null;
+  chainId: string | null;
+  nativeBalance: string | null;
 }
 
-export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
+export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress, chainId, nativeBalance }) => {
   const isAr = lang === 'ar';
+  const chainNames: Record<string, string> = { '0x1': 'Ethereum', '0x38': 'BNB Smart Chain', '0x89': 'Polygon', '0xa4b1': 'Arbitrum One', '0xa': 'Optimism', '0x2105': 'Base', '0xaa36a7': 'Sepolia Testnet', '0x61': 'BNB Testnet' };
+  const activeChainName = chainId ? (chainNames[chainId.toLowerCase()] ?? 'Unknown network') : 'Not connected';
+  const selectedNetwork = { name: activeChainName };
+  const nativeSymbol = chainId?.toLowerCase() === '0x38' || chainId?.toLowerCase() === '0x61' ? 'BNB' : chainId?.toLowerCase() === '0x1' || chainId?.toLowerCase() === '0xaa36a7' ? 'ETH' : chainId?.toLowerCase() === '0x89' ? 'POL' : chainId?.toLowerCase() === '0xa4b1' || chainId?.toLowerCase() === '0xa' || chainId?.toLowerCase() === '0x2105' ? 'ETH' : '';
 
-  const [selectedNetwork, setSelectedNetwork] = useState<BlockchainNetwork>(BLOCKCHAIN_NETWORKS[0]);
-  const [assets, setAssets] = useState<WalletAsset[]>(INITIAL_WALLET_ASSETS);
+  const [assets, setAssets] = useState<WalletAsset[]>([]);
   const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | 'backup' | null>(null);
   
   // Send state
@@ -46,58 +51,22 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
 
   // Backup seed phrase reveal state
   const [showSeed, setShowSeed] = useState(false);
-  const seedWords = ['alpha', 'matrix', 'crystal', 'quantum', 'harbor', 'nebula', 'shield', 'falcon', 'summit', 'voyage', 'horizon', 'zenith'];
+  const seedWords: string[] = [];
 
   // Total balance computation
-  const totalBalanceUSD = assets.reduce((acc, curr) => acc + (curr.balance * curr.priceUSD), 0);
 
-  // Handle Send action
+  // Safety guard: never simulate a blockchain transfer or show false success.
   const handleExecuteSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sendRecipient || !sendAmount) return;
-    const numAmt = parseFloat(sendAmount);
-    setAssets(prev => prev.map(a => {
-      if (a.symbol === sendSymbol) {
-        return { ...a, balance: Math.max(0, a.balance - numAmt) };
-      }
-      return a;
-    }));
-    setSendSuccess(true);
-    setTimeout(() => {
-      setSendSuccess(false);
-      setActiveModal(null);
-      setSendAmount('');
-      setSendRecipient('');
-    }, 2000);
+    setSendSuccess(false);
+    setActiveModal(null);
   };
 
-  // Handle Swap action
+  // Safety guard: swaps stay unavailable until a real DEX transaction flow is integrated.
   const handleExecuteSwap = () => {
-    setIsSwapping(true);
-    setTimeout(() => {
-      const fromAsset = assets.find(a => a.symbol === swapFrom);
-      const toAsset = assets.find(a => a.symbol === swapTo);
-      if (fromAsset && toAsset) {
-        const fromValUSD = parseFloat(swapAmount) * fromAsset.priceUSD;
-        const toAmt = fromValUSD / toAsset.priceUSD;
-
-        setAssets(prev => prev.map(a => {
-          if (a.symbol === swapFrom) {
-            return { ...a, balance: Math.max(0, a.balance - parseFloat(swapAmount)) };
-          }
-          if (a.symbol === swapTo) {
-            return { ...a, balance: a.balance + toAmt };
-          }
-          return a;
-        }));
-      }
-      setIsSwapping(false);
-      setSwapComplete(true);
-      setTimeout(() => {
-        setSwapComplete(false);
-        setActiveModal(null);
-      }, 1500);
-    }, 1200);
+    setIsSwapping(false);
+    setSwapComplete(false);
+    setActiveModal(null);
   };
 
   return (
@@ -110,13 +79,13 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
               <ShieldCheck className="w-4 h-4" />
               <span>{isAr ? 'محفظة لا مركزية ذاتية الحفظ (Non-Custodial Multi-Chain)' : 'Non-Custodial Multi-Chain Engine'}</span>
             </div>
-            <div className="text-3xl lg:text-5xl font-black text-white font-mono tracking-tight tabular-nums">
-              ${totalBalanceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <div className="text-2xl lg:text-3xl font-black text-white tracking-tight">
+              {walletAddress ? (isAr ? 'المحفظة متصلة' : 'Wallet connected') : (isAr ? 'المحفظة غير متصلة' : 'Wallet not connected')}
             </div>
             <p className="text-xs text-slate-400 mt-2 flex items-center gap-2">
-              <span>{isAr ? 'العنوان الرئيسي المشفر:' : 'Master Vault Address:'}</span>
+              <span>{isAr ? 'عنوان محفظتك المتصلة:' : 'Connected wallet address:'}</span>
               <span className="font-mono text-slate-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                0x71C35B9e01B93A2eA982C991448bFaFa98324e92
+                {walletAddress ?? (isAr ? 'لم يتم ربط محفظة' : 'No wallet connected')}
               </span>
             </p>
           </div>
@@ -125,6 +94,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setActiveModal('send')}
+              disabled
+              title={isAr ? 'سيتم تفعيل التحويل بعد تنفيذ معاملات بلوكتشين حقيقية' : 'Sending will be enabled after real on-chain transactions are implemented'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-lg shadow-indigo-600/20 transition active:scale-95"
             >
               <ArrowUpRight className="w-4 h-4" />
@@ -132,6 +103,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </button>
             <button
               onClick={() => setActiveModal('receive')}
+              disabled
+              title={isAr ? 'سيتم تفعيل الاستلام بعد إنشاء QR حقيقي والتحقق من الشبكة' : 'Receive will be enabled after real QR generation and network verification'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-600/20 transition active:scale-95"
             >
               <ArrowDownLeft className="w-4 h-4" />
@@ -139,6 +112,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </button>
             <button
               onClick={() => setActiveModal('swap')}
+              disabled
+              title={isAr ? 'سيتم تفعيل التبديل بعد ربط بروتوكول DEX حقيقي' : 'Swap will be enabled after a real DEX integration'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs transition active:scale-95"
             >
               <RefreshCw className="w-4 h-4 text-cyan-400" />
@@ -146,6 +121,8 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </button>
             <button
               onClick={() => setActiveModal('backup')}
+              disabled
+              title={isAr ? 'عبارة الاسترداد تبقى داخل محفظتك الخارجية' : 'Recovery phrase stays in your external wallet'}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-amber-300 border border-amber-500/30 font-semibold text-xs transition"
             >
               <Key className="w-4 h-4 text-amber-400" />
@@ -155,47 +132,29 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
         </div>
       </div>
 
-      {/* Network Selector Bar (The 10 major active networks) */}
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs leading-6 text-amber-100">
+        {isAr
+          ? 'تنبيه: تم تفعيل واجهة الاتصال بالمحفظة فقط. الأرصدة والتحويلات والتبديل متعدد الشبكات لم تُربط بعد ببيانات بلوكتشين حقيقية، لذلك أوقفنا هذه الإجراءات مؤقتًا لحمايتك.'
+          : 'Notice: wallet connection UI is enabled only. Live balances, transfers, and multi-chain swaps are not yet connected to blockchain data, so these actions are temporarily disabled for your safety.'}
+      </div>
+
+      {/* Current injected-wallet network; network switching is not yet enabled. */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Layers className="w-4 h-4 text-indigo-400" />
-            <span>{isAr ? 'الشبكات النشطة المدعومة (10 شبكات بلوكتشين)' : 'Active Multi-Chain Networks (10 Protocols)'}</span>
+            <span>{isAr ? 'الشبكة الحالية للمحفظة' : 'Current wallet network'}</span>
           </h3>
           <span className="text-xs text-slate-400 font-mono">
-            RPC Node Status: <span className="text-emerald-400 font-bold">All Healthy</span>
+            {isAr ? 'الشبكة:' : 'Network:'} <span className={walletAddress ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>{walletAddress ? activeChainName : (isAr ? 'غير متصل' : 'Not connected')}</span>
           </span>
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {BLOCKCHAIN_NETWORKS.map((net) => {
-            const isSelected = selectedNetwork.id === net.id;
-            return (
-              <button
-                key={net.id}
-                onClick={() => setSelectedNetwork(net)}
-                className={`p-3 rounded-xl border text-left transition flex items-center justify-between ${
-                  isSelected
-                    ? 'bg-indigo-950/40 border-indigo-500/60 shadow-md shadow-indigo-950/40'
-                    : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
-                }`}
-              >
-                <div>
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: net.color }}></span>
-                    <span className="truncate max-w-[100px]">{net.name}</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400 font-mono mt-0.5">
-                    Gas: {net.gasPriceGwei} gwei
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono font-bold text-indigo-400 uppercase">
-                  {net.nativeSymbol}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+        <div className="text-xs text-slate-400">{isAr ? 'الرصيد الأصلي على الشبكة الحالية' : 'Native balance on current network'}</div>
+        <div className="mt-1 text-lg font-bold text-white">{walletAddress ? (nativeBalance === null ? (isAr ? 'غير متاح حاليًا' : 'Unavailable') : `${nativeBalance}${nativeSymbol ? ` ${nativeSymbol}` : ''}`) : (isAr ? 'اربط المحفظة أولاً' : 'Connect wallet first')}</div>
+        <div className="text-xs text-slate-500 mt-1">{activeChainName} · {chainId ?? '—'}</div>
       </div>
 
       {/* Assets Breakdown Table */}
@@ -223,6 +182,15 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-slate-300">
+              {assets.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-400">
+                    {isAr
+                      ? 'أرصدة العملات والرموز غير مفعّلة بعد. المعروض حاليًا هو الرصيد الأصلي للشبكة المتصلة فقط.'
+                      : 'Token balances are not integrated yet. Only the connected network native balance is currently read.'}
+                  </td>
+                </tr>
+              )}
               {assets.map((asset) => {
                 const totalAssetVal = asset.balance * asset.priceUSD;
                 return (
@@ -255,13 +223,12 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                     </td>
                     <td className="py-3 px-6 text-center">
                       <button
-                        onClick={() => {
-                          setSendSymbol(asset.symbol);
-                          setActiveModal('send');
-                        }}
-                        className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono transition"
+                        type="button"
+                        disabled
+                        title={isAr ? 'التحويل الحقيقي غير مفعّل بعد' : 'Real on-chain transfers are not enabled yet'}
+                        className="px-2.5 py-1 rounded bg-slate-800/50 text-slate-500 text-xs font-mono cursor-not-allowed"
                       >
-                        {isAr ? 'إرسال' : 'Send'}
+                        {isAr ? 'غير متاح' : 'Unavailable'}
                       </button>
                     </td>
                   </tr>
@@ -347,7 +314,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 <div className="p-3 bg-slate-950 rounded-xl border border-slate-800/80 space-y-1">
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'رسوم الغاز المقدرة:' : 'Estimated Gas:'}</span>
-                    <span className="font-mono text-emerald-400">~$0.45 USD</span>
+                    <span className="font-mono text-amber-300">{isAr ? 'غير متاح — لا يوجد تقدير حقيقي' : 'Unavailable — no live estimate'}</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'الشبكة المستهدفة:' : 'Target Network:'}</span>
@@ -359,7 +326,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                   type="submit"
                   className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-lg shadow-indigo-600/30"
                 >
-                  {isAr ? 'تأكيد الإرسال والتوقيع المشفر' : 'Sign & Broadcast Transaction'}
+                  {isAr ? 'الإرسال غير متاح حاليًا' : 'Sending currently unavailable'}
                 </button>
               </form>
             )}
@@ -389,12 +356,12 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
             </div>
 
             <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 mb-4 text-xs font-mono text-slate-300 break-all select-all">
-              0x71C35B9e01B93A2eA982C991448bFaFa98324e92
+              {walletAddress ?? (isAr ? 'اربط محفظتك أولاً' : 'Connect a wallet first')}
             </div>
 
             <button
               onClick={() => {
-                navigator.clipboard.writeText('0x71C35B9e01B93A2eA982C991448bFaFa98324e92');
+                if (walletAddress) navigator.clipboard.writeText(walletAddress);
                 alert(isAr ? 'تم نسخ العنوان إلى الحافظة' : 'Address copied to clipboard');
               }}
               className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition flex items-center justify-center gap-2 text-xs"
@@ -434,7 +401,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'أنت تدفع:' : 'You Pay:'}</span>
-                    <span>{isAr ? 'الرصيد: ' : 'Bal: '} 14,250 USDT</span>
+                    <span>{isAr ? 'الرصيد: غير متصل' : 'Balance: not connected'}</span>
                   </div>
                   <div className="flex gap-2">
                     <input
@@ -460,11 +427,11 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'أنت تستلم تقريباً:' : 'You Receive (approx):'}</span>
-                    <span className="text-emerald-400">سعر الصرف الأفضل ✓</span>
+                    <span className="text-amber-300">{isAr ? 'عرض تجريبي فقط — لا يوجد سعر مباشر' : 'Preview only — no live quote'}</span>
                   </div>
                   <div className="flex gap-2">
                     <div className="w-full text-emerald-400 font-mono text-base font-bold py-1">
-                      {((parseFloat(swapAmount) || 0) / 3620.80).toFixed(4)}
+                      —
                     </div>
                     <select
                       value={swapTo}
@@ -482,23 +449,23 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 <div className="p-3 bg-slate-950/60 rounded-xl text-slate-400 space-y-1">
                   <div className="flex justify-between">
                     <span>{isAr ? 'الانزلاق السعري (Slippage):' : 'Slippage:'}</span>
-                    <span className="font-mono text-slate-300">0.5% (Auto)</span>
+                    <span className="font-mono text-slate-300">{isAr ? 'غير محدد' : 'Not configured'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>{isAr ? 'رسوم البروتوكول:' : 'Protocol Fee:'}</span>
-                    <span className="font-mono text-emerald-400">0.0% (Zero Fee)</span>
+                    <span className="font-mono text-slate-300">{isAr ? 'غير محدد' : 'Not configured'}</span>
                   </div>
                 </div>
 
                 <button
                   onClick={handleExecuteSwap}
-                  disabled={isSwapping}
+                  disabled
                   className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 text-white font-bold transition flex items-center justify-center gap-2"
                 >
                   {isSwapping ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
                   ) : (
-                    <span>{isAr ? 'تنفيذ التبديل الفوري' : 'Execute Swap'}</span>
+                    <span>{isAr ? 'التبديل غير متاح حاليًا' : 'Swap currently unavailable'}</span>
                   )}
                 </button>
               </div>
@@ -534,14 +501,14 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 <div className="flex flex-col items-center justify-center py-6 space-y-2">
                   <Lock className="w-8 h-8 text-slate-600" />
                   <span className="text-xs text-slate-400">
-                    {isAr ? 'الكلمات مشفرة ومحجوبة لأسباب أمنية' : 'Phrase is encrypted for safety'}
+                    {isAr ? 'عبارة الاسترداد لا تنشئها WEB3ONE ولا تخزنها. افتح محفظتك الخارجية لإدارتها بأمان.' : 'WEB3ONE does not create or store your recovery phrase. Manage it securely inside your external wallet.'}
                   </span>
                   <button
                     onClick={() => setShowSeed(true)}
                     className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>{isAr ? 'إظهار الكلمات' : 'Reveal Words'}</span>
+                    <span>{isAr ? 'افتح المحفظة الخارجية' : 'Open external wallet'}</span>
                   </button>
                 </div>
               ) : (
@@ -561,7 +528,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
                 onClick={() => setShowSeed(false)}
                 className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition"
               >
-                {isAr ? 'إخفاء الكلمات مجدداً' : 'Hide Seed Phrase'}
+                {isAr ? 'إغلاق' : 'Close'}
               </button>
             )}
           </div>

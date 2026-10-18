@@ -1,6 +1,6 @@
 import React from 'react';
 import { Globe, DollarSign, Award, CheckCircle2, TrendingUp, Sparkles, ExternalLink, ShieldAlert, BarChart2 } from 'lucide-react';
-import { DOMAIN_COMPARABLES } from '../data/auditData';
+import { DOMAIN_COMPARABLES } from './auditData';
 
 interface DomainAppraisalSectionProps {
   lang: 'ar' | 'en';

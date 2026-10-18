@@ -22,7 +22,8 @@ interface NavbarProps {
   lang: 'ar' | 'en';
   setLang: (lang: 'ar' | 'en') => void;
   walletConnected: boolean;
-  setWalletConnected: (val: boolean) => void;
+  onConnectWallet: () => void;
+  walletAddress: string | null;
   totalBalanceUSD: number;
 }
 
@@ -32,12 +33,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   lang,
   setLang,
   walletConnected,
-  setWalletConnected,
+  onConnectWallet,
+  walletAddress,
   totalBalanceUSD
 }) => {
   const isAr = lang === 'ar';
   const [copied, setCopied] = React.useState(false);
-  const userAddress = '0x71C...4e92';
+  const userAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
 
   const navLinks: { id: SuperAppTab; labelAr: string; labelEn: string; icon: any }[] = [
     { id: 'wallet', labelAr: 'المحفظة', labelEn: 'Wallet', icon: Wallet },
@@ -51,7 +53,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const copyAddress = () => {
-    navigator.clipboard.writeText('0x71C35B9e01B93A2eA982C991448bFaFa98324e92');
+    if (!walletAddress) return;
+    navigator.clipboard.writeText(walletAddress);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -122,12 +125,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
                 <span className="text-slate-600">|</span>
                 <span className="font-mono text-emerald-400 font-bold tabular-nums">
-                  ${totalBalanceUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  {isAr ? 'متصل' : 'Connected'}
                 </span>
               </div>
             ) : (
               <button
-                onClick={() => setWalletConnected(true)}
+                onClick={onConnectWallet}
                 className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 transition whitespace-nowrap"
               >
                 {isAr ? 'ربط المحفظة' : 'Connect Wallet'}
