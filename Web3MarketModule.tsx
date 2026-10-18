@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { WEB3_PROJECT_LISTINGS } from '../data/mockData';
-import { Web3ProjectListing } from '../types';
+import { WEB3_PROJECT_LISTINGS } from './mockData';
+import { Web3ProjectListing } from './index';
 import {
   ShoppingBag,
   ShieldCheck,
