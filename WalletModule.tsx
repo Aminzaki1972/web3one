@@ -216,6 +216,15 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-slate-300">
+              {assets.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-400">
+                    {isAr
+                      ? 'أرصدة العملات والرموز غير مفعّلة بعد. المعروض حاليًا هو الرصيد الأصلي للشبكة المتصلة فقط.'
+                      : 'Token balances are not integrated yet. Only the connected network native balance is currently read.'}
+                  </td>
+                </tr>
+              )}
               {assets.map((asset) => {
                 const totalAssetVal = asset.balance * asset.priceUSD;
                 return (
