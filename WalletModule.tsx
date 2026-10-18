@@ -30,6 +30,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
   const isAr = lang === 'ar';
   const chainNames: Record<string, string> = { '0x1': 'Ethereum', '0x38': 'BNB Smart Chain', '0x89': 'Polygon', '0xa4b1': 'Arbitrum One', '0xa': 'Optimism', '0x2105': 'Base', '0xaa36a7': 'Sepolia Testnet', '0x61': 'BNB Testnet' };
   const activeChainName = chainId ? (chainNames[chainId.toLowerCase()] ?? 'Unknown network') : 'Not connected';
+  const nativeSymbol = chainId?.toLowerCase() === '0x38' || chainId?.toLowerCase() === '0x61' ? 'BNB' : chainId?.toLowerCase() === '0x1' || chainId?.toLowerCase() === '0xaa36a7' ? 'ETH' : chainId?.toLowerCase() === '0x89' ? 'POL' : chainId?.toLowerCase() === '0xa4b1' || chainId?.toLowerCase() === '0xa' || chainId?.toLowerCase() === '0x2105' ? 'ETH' : '';
 
   const [assets, setAssets] = useState<WalletAsset[]>([]);
   const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | 'backup' | null>(null);
@@ -182,6 +183,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
             {isAr ? 'الشبكة:' : 'Network:'} <span className={walletAddress ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>{walletAddress ? activeChainName : (isAr ? 'غير متصل' : 'Not connected')}</span>
           </span>
         </div>
+      </div>
 
       <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
         <div className="text-xs text-slate-400">{isAr ? 'الرصيد الأصلي على الشبكة الحالية' : 'Native balance on current network'}</div>
