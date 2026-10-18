@@ -314,7 +314,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
                 <div className="p-3 bg-slate-950 rounded-xl border border-slate-800/80 space-y-1">
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'رسوم الغاز المقدرة:' : 'Estimated Gas:'}</span>
-                    <span className="font-mono text-emerald-400">~$0.45 USD</span>
+                    <span className="font-mono text-amber-300">{isAr ? 'غير متاح — لا يوجد تقدير حقيقي' : 'Unavailable — no live estimate'}</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'الشبكة المستهدفة:' : 'Target Network:'}</span>
@@ -326,7 +326,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
                   type="submit"
                   className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-lg shadow-indigo-600/30"
                 >
-                  {isAr ? 'تأكيد الإرسال والتوقيع المشفر' : 'Sign & Broadcast Transaction'}
+                  {isAr ? 'الإرسال غير متاح حاليًا' : 'Sending currently unavailable'}
                 </button>
               </form>
             )}
@@ -401,7 +401,7 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
                 <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'أنت تدفع:' : 'You Pay:'}</span>
-                    <span>{isAr ? 'الرصيد: ' : 'Bal: '} 14,250 USDT</span>
+                    <span>{isAr ? 'الرصيد: غير متصل' : 'Balance: not connected'}</span>
                   </div>
                   <div className="flex gap-2">
                     <input
@@ -427,11 +427,11 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
                 <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
                   <div className="flex justify-between text-slate-400">
                     <span>{isAr ? 'أنت تستلم تقريباً:' : 'You Receive (approx):'}</span>
-                    <span className="text-emerald-400">سعر الصرف الأفضل ✓</span>
+                    <span className="text-amber-300">{isAr ? 'عرض تجريبي فقط — لا يوجد سعر مباشر' : 'Preview only — no live quote'}</span>
                   </div>
                   <div className="flex gap-2">
                     <div className="w-full text-emerald-400 font-mono text-base font-bold py-1">
-                      {((parseFloat(swapAmount) || 0) / 3620.80).toFixed(4)}
+                      —
                     </div>
                     <select
                       value={swapTo}
@@ -449,23 +449,23 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang, walletAddress,
                 <div className="p-3 bg-slate-950/60 rounded-xl text-slate-400 space-y-1">
                   <div className="flex justify-between">
                     <span>{isAr ? 'الانزلاق السعري (Slippage):' : 'Slippage:'}</span>
-                    <span className="font-mono text-slate-300">0.5% (Auto)</span>
+                    <span className="font-mono text-slate-300">{isAr ? 'غير محدد' : 'Not configured'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>{isAr ? 'رسوم البروتوكول:' : 'Protocol Fee:'}</span>
-                    <span className="font-mono text-emerald-400">0.0% (Zero Fee)</span>
+                    <span className="font-mono text-slate-300">{isAr ? 'غير محدد' : 'Not configured'}</span>
                   </div>
                 </div>
 
                 <button
                   onClick={handleExecuteSwap}
-                  disabled={isSwapping}
+                  disabled
                   className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 text-white font-bold transition flex items-center justify-center gap-2"
                 >
                   {isSwapping ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
                   ) : (
-                    <span>{isAr ? 'تنفيذ التبديل الفوري' : 'Execute Swap'}</span>
+                    <span>{isAr ? 'التبديل غير متاح حاليًا' : 'Swap currently unavailable'}</span>
                   )}
                 </button>
               </div>
