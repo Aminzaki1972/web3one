@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { STREAMING_CHANNELS, NETFLIX_STYLE_SHOWS } from '../data/mockData';
-import { StreamingChannel, MovieShow } from '../types';
+import { STREAMING_CHANNELS, NETFLIX_STYLE_SHOWS } from './mockData';
+import { StreamingChannel, MovieShow } from './index';
 import {
   Tv,
   Film,
