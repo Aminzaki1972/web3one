@@ -1,5 +1,5 @@
 import React from 'react';
-import { SuperAppTab } from '../types';
+import { SuperAppTab } from './index';
 import {
   Wallet,
   TrendingUp,

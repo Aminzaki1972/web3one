@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { CITIES_WEATHER } from '../data/mockData';
-import { WeatherData } from '../types';
+import { CITIES_WEATHER } from './mockData';
+import { WeatherData } from './index';
 import {
   CloudSun,
   Sun,

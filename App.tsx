@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { SuperAppTab } from './types';
-import { Navbar } from './components/Navbar';
-import { WalletModule } from './components/WalletModule';
-import { MarketsModule } from './components/MarketsModule';
-import { SocialModule } from './components/SocialModule';
-import { WeatherModule } from './components/WeatherModule';
-import { NewsModule } from './components/NewsModule';
-import { CinemaModule } from './components/CinemaModule';
-import { Web3MarketModule } from './components/Web3MarketModule';
-import { Web3JobsModule } from './components/Web3JobsModule';
+import { SuperAppTab } from './index';
+import { Navbar } from './Navbar';
+import { WalletModule } from './WalletModule';
+import { MarketsModule } from './MarketsModule';
+import { SocialModule } from './SocialModule';
+import { WeatherModule } from './WeatherModule';
+import { NewsModule } from './NewsModule';
+import { CinemaModule } from './CinemaModule';
+import { Web3MarketModule } from './Web3MarketModule';
+import { Web3JobsModule } from './Web3JobsModule';
 import {
   Wallet,
   TrendingUp,

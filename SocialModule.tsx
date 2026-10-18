@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SOCIAL_POSTS } from '../data/mockData';
-import { SocialPost, ChatMessage } from '../types';
+import { SOCIAL_POSTS } from './mockData';
+import { SocialPost, ChatMessage } from './index';
 import {
   MessageCircle,
   Video,

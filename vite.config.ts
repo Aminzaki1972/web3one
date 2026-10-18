@@ -5,6 +5,8 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // This repository is published at https://aminzaki1972.github.io/web3one/
+    base: '/web3one/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

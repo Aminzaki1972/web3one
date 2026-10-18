@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { NEWS_ARTICLES } from '../data/mockData';
-import { NewsArticle } from '../types';
+import { NEWS_ARTICLES } from './mockData';
+import { NewsArticle } from './index';
 import {
   Newspaper,
   Clock,

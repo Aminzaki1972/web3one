@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { BLOCKCHAIN_NETWORKS, INITIAL_WALLET_ASSETS } from '../data/mockData';
-import { BlockchainNetwork, WalletAsset } from '../types';
+import { BLOCKCHAIN_NETWORKS, INITIAL_WALLET_ASSETS } from './mockData';
+import { BlockchainNetwork, WalletAsset } from './index';
 import {
   Wallet,
   ArrowUpRight,
