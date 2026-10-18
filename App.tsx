@@ -87,7 +87,10 @@ export default function App() {
       .then((value) => {
         if (cancelled) return;
         const wei = BigInt(value as string);
-        setNativeBalance((Number(wei) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }));
+        const baseUnit = 10n ** 18n;
+        const whole = wei / baseUnit;
+        const fraction = (wei % baseUnit).toString().padStart(18, '0').slice(0, 6).replace(/0+$/, '');
+        setNativeBalance(fraction ? `${whole}.${fraction}` : whole.toString());
       })
       .catch(() => { if (!cancelled) setNativeBalance(null); });
     return () => { cancelled = true; };
