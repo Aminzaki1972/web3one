@@ -9,8 +9,6 @@ import {
   Tv,
   Globe,
   Bell,
-  CheckCircle2,
-  Copy,
   ChevronDown,
   Briefcase,
   Download
@@ -21,9 +19,6 @@ interface NavbarProps {
   setActiveTab: (tab: SuperAppTab) => void;
   lang: 'ar' | 'en';
   setLang: (lang: 'ar' | 'en') => void;
-  walletConnected: boolean;
-  setWalletConnected: (val: boolean) => void;
-  totalBalanceUSD: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -31,13 +26,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   lang,
   setLang,
-  walletConnected,
-  setWalletConnected,
-  totalBalanceUSD
 }) => {
   const isAr = lang === 'ar';
-  const [copied, setCopied] = React.useState(false);
-  const userAddress = '0x71C...4e92';
 
   const navLinks: { id: SuperAppTab; labelAr: string; labelEn: string; icon: any }[] = [
     { id: 'wallet', labelAr: 'المحفظة', labelEn: 'Wallet', icon: Wallet },
@@ -49,12 +39,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'weather', labelAr: 'الطقس', labelEn: 'Weather', icon: CloudSun },
     { id: 'cinema', labelAr: 'البث والسينما', labelEn: 'Live TV & Cinema', icon: Tv },
   ];
-
-  const copyAddress = () => {
-    navigator.clipboard.writeText('0x71C35B9e01B93A2eA982C991448bFaFa98324e92');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <header className="border-b border-slate-800 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40">
@@ -108,31 +92,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Zone 3: Wallet Action & Quick Controls */}
           <div className="flex items-center gap-2.5 shrink-0">
-            {/* Wallet Connect Button */}
-            {walletConnected ? (
-              <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1 text-xs">
-                <button
-                  onClick={copyAddress}
-                  className="flex items-center gap-1 text-slate-300 hover:text-white font-mono"
-                  title="Copy Wallet Address"
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  <span>{userAddress}</span>
-                  {copied ? <CheckCircle2 className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-500" />}
-                </button>
-                <span className="text-slate-600">|</span>
-                <span className="font-mono text-emerald-400 font-bold tabular-nums">
-                  ${totalBalanceUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                </span>
-              </div>
-            ) : (
-              <button
-                onClick={() => setWalletConnected(true)}
-                className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 transition whitespace-nowrap"
-              >
-                {isAr ? 'ربط المحفظة' : 'Connect Wallet'}
-              </button>
-            )}
+            {/* Wallet integration is not implemented; never display a fabricated address or balance. */}
+            <button
+              onClick={() => window.alert(isAr ? 'ربط المحفظة الحقيقي غير مفعّل بعد. لم يتم ربط أي محفظة.' : 'Real wallet connection is not integrated yet. No wallet has been connected.')}
+              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 transition whitespace-nowrap"
+            >
+              {isAr ? 'ربط المحفظة' : 'Connect Wallet'}
+            </button>
 
             {/* Direct Source Code Download Button */}
             <a
