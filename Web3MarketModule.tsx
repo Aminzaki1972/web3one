@@ -680,38 +680,43 @@ export const Web3MarketModule: React.FC<Web3MarketModuleProps> = ({ lang }) => {
 
             {/* Escrow Progress Stepper */}
             <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+              <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs font-bold text-amber-200">
+                {isAr
+                  ? 'وضع تجريبي: لا يوجد إيداع أو ضمان أو تحرير أموال حقيقي متصل في هذه الواجهة.'
+                  : 'DEMO MODE: no real deposit, escrow, or fund release is connected to this UI.'}
+              </div>
               <div className="text-xs font-bold text-white mb-2">
-                {isAr ? 'مراحل تنفيذ وضمان الصفقة:' : 'Escrow Milestone Execution:'}
+                {isAr ? 'مراحل الصفقة (غير متصلة فعليًا):' : 'Deal milestones (not connected):'}
               </div>
               <div className="space-y-2 text-xs">
                 <div className="flex items-center gap-2 text-emerald-400">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>1. إيداع أموال المشتري في العقد الذكي من محفظة Web3One (USDT Escrow Deposit) ✓</span>
+                  <span>1. إيداع الضمان: غير منفّذ — يلزم عقد ذكي ومعاملة مؤكدة على الشبكة.</span>
                 </div>
                 <div className="flex items-center gap-2 text-emerald-400">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>2. تسليم صلاحيات مستودع GitHub والدومين للمشتري ✓</span>
+                  <span>2. تسليم المستودع والدومين: يلزم التحقق الفعلي من التسليم خارج هذه الواجهة.</span>
                 </div>
                 <div className="flex items-center gap-2 text-amber-300">
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>3. فترة المراجعة الفنية وتأكيد المشتري (جارية الآن...)</span>
+                  <span>3. المراجعة الفنية: حالة تجريبية وليست مؤقتًا زمنيًا حقيقيًا.</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-500">
                   <Lock className="w-4 h-4" />
-                  <span>4. تحرير الأموال تلقائياً للمحفظة مع اقتطاع عمولة 7.5%</span>
+                  <span>4. تحرير الأموال: غير متاح قبل تنفيذ الضمان والتحقق من المعاملة.</span>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
-                onClick={() => alert(isAr ? 'تم تأكيد استلام المشروع بنجاح وإرسال 13,412.50$ للبائع واقتطاع 7.5% عمولة المنصة!' : 'Deal Completed! Funds released to seller.')}
+                onClick={() => alert(isAr ? 'لم يتم تحرير أي أموال. هذه واجهة تجريبية ولا يوجد عقد ضمان متصل.' : 'No funds were released. This is a demo UI with no escrow contract connected.')}
                 className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition"
               >
                 {isAr ? 'تأكيد الاستلام وتحرير الأموال للبائع' : 'Release Funds to Seller'}
               </button>
               <button
-                onClick={() => alert(isAr ? 'تم فتح نزاع تحكيمي؛ تم تجميد الأموال لحين مراجعة المحكمين.' : 'Dispute opened for arbitration review.')}
+                onClick={() => alert(isAr ? 'لم يتم فتح نزاع أو تجميد أموال. نظام النزاعات غير متصل بعد.' : 'No dispute was opened and no funds were frozen. Dispute handling is not connected yet.')}
                 className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 font-bold text-xs transition"
               >
                 {isAr ? 'فتح نزاع تحكيمي (Dispute)' : 'Open Dispute'}
