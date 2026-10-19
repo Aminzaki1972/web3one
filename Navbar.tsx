@@ -127,7 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             ) : (
               <button
-                onClick={() => setWalletConnected(true)}
+                onClick={() => window.alert(isAr ? 'ربط المحفظة الحقيقي غير مفعّل بعد. لم يتم ربط أي محفظة.' : 'Real wallet connection is not integrated yet. No wallet has been connected.')}
                 className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 transition whitespace-nowrap"
               >
                 {isAr ? 'ربط المحفظة' : 'Connect Wallet'}
