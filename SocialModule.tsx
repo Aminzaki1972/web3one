@@ -156,6 +156,9 @@ export const SocialModule: React.FC<SocialModuleProps> = ({ lang }) => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+        {isAr ? 'وضع تجريبي: المنشورات والرسائل محلية وغير محفوظة على خادم، والمكالمات لا تستخدم اتصال WebRTC حقيقيًا. لا ترسل معلومات خاصة أو أموالًا من هنا.' : 'Demo mode: posts and messages are local and are not saved to a server; calls do not use a real WebRTC connection. Do not share private information or send funds here.'}
+      </div>
       {/* Sub-navigation */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
