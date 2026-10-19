@@ -74,13 +74,16 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
               <ShieldCheck className="w-4 h-4" />
               <span>{isAr ? 'محفظة لا مركزية ذاتية الحفظ (Non-Custodial Multi-Chain)' : 'Non-Custodial Multi-Chain Engine'}</span>
             </div>
+            <p className="text-xs font-bold text-amber-300 mb-2">
+              {isAr ? 'نسخة تجريبية — الرصيد المعروض ليس رصيدًا حقيقيًا' : 'DEMO ONLY — displayed balance is not real funds'}
+            </p>
             <div className="text-3xl lg:text-5xl font-black text-white font-mono tracking-tight tabular-nums">
               ${totalBalanceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-xs text-slate-400 mt-2 flex items-center gap-2">
-              <span>{isAr ? 'العنوان الرئيسي المشفر:' : 'Master Vault Address:'}</span>
-              <span className="font-mono text-slate-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                0x71C35B9e01B93A2eA982C991448bFaFa98324e92
+              <span>{isAr ? 'حالة المحفظة:' : 'Wallet status:'}</span>
+              <span className="font-mono text-amber-200 bg-slate-950 px-2 py-0.5 rounded border border-amber-500/30">
+                {isAr ? 'لا توجد محفظة حقيقية متصلة' : 'No real wallet connected'}
               </span>
             </p>
           </div>
