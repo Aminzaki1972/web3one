@@ -39,6 +39,9 @@ export const CinemaModule: React.FC<CinemaModuleProps> = ({ lang }) => {
 
   return (
     <div className="space-y-8 animate-fadeIn">
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+        {isAr ? 'تنبيه: الأفلام والقنوات المعروضة بيانات تجريبية؛ تشغيل الفيديو وقائمة المشاهدة لا يمثلان خدمة بث متكاملة.' : 'Notice: movie and channel entries are sample data; playback and watchlist are not a complete streaming service.'}
+      </div>
       {/* Module Top Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
