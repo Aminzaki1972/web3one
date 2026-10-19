@@ -54,6 +54,9 @@ export const NewsModule: React.FC<NewsModuleProps> = ({ lang }) => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+        {isAr ? 'تنبيه: الأخبار الحالية بيانات تجريبية وليست بثًا إخباريًا مباشرًا من القنوات المذكورة.' : 'Notice: these headlines are sample data, not a live feed from the listed news providers.'}
+      </div>
       {/* Top News Control Bar */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
