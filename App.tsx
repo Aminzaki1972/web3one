@@ -31,7 +31,7 @@ export default function App() {
   const [walletConnected, setWalletConnected] = useState<boolean>(false);
 
   const isAr = lang === 'ar';
-  const totalBalanceUSD = 92450.75;
+  const totalBalanceUSD = 0; // No real wallet is connected; do not display a fabricated balance.
 
   return (
     <div
