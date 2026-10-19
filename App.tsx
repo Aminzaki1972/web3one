@@ -28,7 +28,7 @@ import {
 export default function App() {
   const [activeTab, setActiveTab] = useState<SuperAppTab>('wallet');
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
-  const [walletConnected, setWalletConnected] = useState<boolean>(true);
+  const [walletConnected, setWalletConnected] = useState<boolean>(false);
 
   const isAr = lang === 'ar';
   const totalBalanceUSD = 92450.75;
