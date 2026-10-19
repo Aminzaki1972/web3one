@@ -77,6 +77,11 @@ export const MarketsModule: React.FC<MarketsModuleProps> = ({ lang }) => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      {activeSubTab !== 'tv' && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+          {isAr ? 'تنبيه: بيانات المؤشرات والأسهم والسندات والسلع المعروضة من بيانات تجريبية وليست أسعارًا مباشرة.' : 'Notice: index, stock, bond, and commodity tables use sample data, not live quotes.'}
+        </div>
+      )}
       {/* Module Navigation Sub-Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
