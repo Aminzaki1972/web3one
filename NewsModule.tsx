@@ -195,7 +195,7 @@ export const NewsModule: React.FC<NewsModuleProps> = ({ lang }) => {
 
             <div className="flex items-center justify-between pt-2 text-xs">
               <button
-                onClick={() => alert(isAr ? 'تم حفظ المقال في المفضلة' : 'Bookmarked to reading list')}
+                onClick={() => alert(isAr ? 'ميزة المفضلة غير متصلة بالحفظ الدائم؛ لم يُحفظ المقال بعد إعادة تحميل الصفحة.' : 'Bookmarks are not persisted yet; this article will not remain saved after reloading.')}
                 className="flex items-center gap-1.5 text-slate-400 hover:text-white"
               >
                 <Bookmark className="w-4 h-4" />

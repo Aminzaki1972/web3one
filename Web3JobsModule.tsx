@@ -86,7 +86,7 @@ export const Web3JobsModule: React.FC<Web3JobsModuleProps> = ({ lang }) => {
     setTimeout(() => {
       setApplySubmitted(false);
       setSelectedJob(null);
-      alert(isAr ? 'تم إرسال طلب التقديم مشفوعاً بمحفظة WEB3ONE وملف GitHub بنجاح!' : 'Application sent with wallet verification!');
+      alert(isAr ? 'هذه نسخة تجريبية: لم يُرسل طلب التقديم إلى خادم أو جهة توظيف، ولم يتم التحقق من المحفظة.' : 'Demo only: the application was not sent to a server or employer, and no wallet verification occurred.');
     }, 1500);
   };
 

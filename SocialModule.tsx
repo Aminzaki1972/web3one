@@ -300,7 +300,7 @@ export const SocialModule: React.FC<SocialModuleProps> = ({ lang }) => {
                   </div>
 
                   <button
-                    onClick={() => alert(isAr ? 'تم إرسال إكرامية 5 USDT للمؤلف مباشرة من المحفظة!' : 'Sent 5 USDT crypto tip to author!')}
+                    onClick={() => alert(isAr ? 'الإكرامية غير متصلة بمحفظة حقيقية. لم يتم إرسال USDT أو تنفيذ معاملة.' : 'Tipping is not connected to a real wallet. No USDT was sent and no transaction occurred.')}
                     className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 px-2 py-0.5 rounded bg-emerald-950/30 border border-emerald-500/30 font-mono text-[11px]"
                   >
                     <DollarSign className="w-3.5 h-3.5" />
