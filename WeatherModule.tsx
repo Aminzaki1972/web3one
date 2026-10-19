@@ -49,6 +49,9 @@ export const WeatherModule: React.FC<WeatherModuleProps> = ({ lang }) => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+        {isAr ? 'تنبيه: درجات الحرارة والطقس المعروض بيانات تجريبية وليست قياسات مباشرة.' : 'Notice: displayed weather values are sample data, not live measurements.'}
+      </div>
       {/* Search & Quick Selector */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
