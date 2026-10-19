@@ -28,10 +28,8 @@ import {
 export default function App() {
   const [activeTab, setActiveTab] = useState<SuperAppTab>('wallet');
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
-  const [walletConnected, setWalletConnected] = useState<boolean>(false);
 
   const isAr = lang === 'ar';
-  const totalBalanceUSD = 0; // No real wallet is connected; do not display a fabricated balance.
 
   return (
     <div
@@ -46,9 +44,6 @@ export default function App() {
         setActiveTab={setActiveTab}
         lang={lang}
         setLang={setLang}
-        walletConnected={walletConnected}
-        setWalletConnected={setWalletConnected}
-        totalBalanceUSD={totalBalanceUSD}
       />
 
       {/* Main Viewport Content Container */}
