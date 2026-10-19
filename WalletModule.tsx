@@ -44,60 +44,24 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
   const [isSwapping, setIsSwapping] = useState(false);
   const [swapComplete, setSwapComplete] = useState(false);
 
-  // Backup seed phrase reveal state
-  const [showSeed, setShowSeed] = useState(false);
-  const seedWords = ['alpha', 'matrix', 'crystal', 'quantum', 'harbor', 'nebula', 'shield', 'falcon', 'summit', 'voyage', 'horizon', 'zenith'];
+  // This UI is demo-only; it must never display or imply a real recovery phrase.
 
   // Total balance computation
   const totalBalanceUSD = assets.reduce((acc, curr) => acc + (curr.balance * curr.priceUSD), 0);
 
-  // Handle Send action
+  // Do not simulate transfers: a UI-only balance update is not a blockchain transaction.
   const handleExecuteSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sendRecipient || !sendAmount) return;
-    const numAmt = parseFloat(sendAmount);
-    setAssets(prev => prev.map(a => {
-      if (a.symbol === sendSymbol) {
-        return { ...a, balance: Math.max(0, a.balance - numAmt) };
-      }
-      return a;
-    }));
-    setSendSuccess(true);
-    setTimeout(() => {
-      setSendSuccess(false);
-      setActiveModal(null);
-      setSendAmount('');
-      setSendRecipient('');
-    }, 2000);
+    alert(isAr
+      ? 'التحويل الحقيقي غير متاح بعد. لم يتم إرسال أي معاملة أو خصم أي أموال. هذه واجهة تجريبية.'
+      : 'Real transfers are not available yet. No transaction was sent and no funds were moved. This is a demo UI.');
   };
 
-  // Handle Swap action
+  // Do not simulate swaps or change displayed balances as if a swap had settled.
   const handleExecuteSwap = () => {
-    setIsSwapping(true);
-    setTimeout(() => {
-      const fromAsset = assets.find(a => a.symbol === swapFrom);
-      const toAsset = assets.find(a => a.symbol === swapTo);
-      if (fromAsset && toAsset) {
-        const fromValUSD = parseFloat(swapAmount) * fromAsset.priceUSD;
-        const toAmt = fromValUSD / toAsset.priceUSD;
-
-        setAssets(prev => prev.map(a => {
-          if (a.symbol === swapFrom) {
-            return { ...a, balance: Math.max(0, a.balance - parseFloat(swapAmount)) };
-          }
-          if (a.symbol === swapTo) {
-            return { ...a, balance: a.balance + toAmt };
-          }
-          return a;
-        }));
-      }
-      setIsSwapping(false);
-      setSwapComplete(true);
-      setTimeout(() => {
-        setSwapComplete(false);
-        setActiveModal(null);
-      }, 1500);
-    }, 1200);
+    alert(isAr
+      ? 'التبديل الحقيقي غير متاح بعد. لم يتم تنفيذ أي معاملة. هذه واجهة تجريبية.'
+      : 'Real swaps are not available yet. No transaction was executed. This is a demo UI.');
   };
 
   return (
@@ -367,41 +331,25 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
         </div>
       )}
 
-      {/* MODAL: Receive Crypto */}
+      {/* MODAL: Receive Crypto — disabled until a real wallet is connected */}
       {activeModal === 'receive' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl relative text-center">
+          <div className="bg-slate-900 border border-amber-500/40 rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
             <button
               onClick={() => setActiveModal(null)}
               className="absolute top-4 left-4 p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              aria-label={isAr ? 'إغلاق' : 'Close'}
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-white mb-2">
-              {isAr ? 'استلام عملات رقمية' : 'Receive Crypto'}
+            <h3 className="text-lg font-bold text-white mb-3">
+              {isAr ? 'الاستلام غير متاح في النسخة التجريبية' : 'Receive is disabled in this demo'}
             </h3>
-            <p className="text-xs text-slate-400 mb-4">
-              {isAr ? `عنوانك على شبكة ${selectedNetwork.name}` : `Your address on ${selectedNetwork.name}`}
+            <p className="text-sm text-amber-200">
+              {isAr
+                ? 'لم يتم ربط محفظة حقيقية. لا ترسل أصولًا إلى أي عنوان معروض داخل هذه النسخة التجريبية.'
+                : 'No real wallet is connected. Do not send assets to any address shown in this demo.'}
             </p>
-
-            <div className="w-48 h-48 mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-center mb-4">
-              <QrCode className="w-40 h-40 text-slate-950" />
-            </div>
-
-            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 mb-4 text-xs font-mono text-slate-300 break-all select-all">
-              0x71C35B9e01B93A2eA982C991448bFaFa98324e92
-            </div>
-
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText('0x71C35B9e01B93A2eA982C991448bFaFa98324e92');
-                alert(isAr ? 'تم نسخ العنوان إلى الحافظة' : 'Address copied to clipboard');
-              }}
-              className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition flex items-center justify-center gap-2 text-xs"
-            >
-              <Copy className="w-4 h-4" />
-              <span>{isAr ? 'نسخ العنوان' : 'Copy Address'}</span>
-            </button>
           </div>
         </div>
       )}
@@ -507,63 +455,25 @@ export const WalletModule: React.FC<WalletModuleProps> = ({ lang }) => {
         </div>
       )}
 
-      {/* MODAL: Seed Phrase Backup */}
+      {/* Backup intentionally disabled: this demo has no generated wallet or recovery phrase. */}
       {activeModal === 'backup' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
+          <div className="bg-slate-900 border border-amber-500/40 rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
             <button
               onClick={() => setActiveModal(null)}
               className="absolute top-4 left-4 p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              aria-label={isAr ? 'إغلاق' : 'Close'}
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2 text-amber-400 mb-2">
-              <Lock className="w-5 h-5" />
-              <h3 className="text-lg font-bold text-white">
-                {isAr ? 'عبارة الاسترداد السرية (Seed Phrase)' : 'Secret Recovery Phrase'}
-              </h3>
-            </div>
-            <p className="text-xs text-slate-400 mb-4">
+            <h3 className="text-lg font-bold text-white mb-3">
+              {isAr ? 'عبارة الاسترداد غير متاحة' : 'Recovery phrase unavailable'}
+            </h3>
+            <p className="text-sm text-amber-200">
               {isAr
-                ? 'لا تشارك هذه الكلمات مع أي شخص أبداً. من يمتلك هذه الكلمات يمتلك كامل أصولك الرقمية.'
-                : 'Never share these 12 words with anyone. Anyone with this phrase has full access to your funds.'}
+                ? 'هذه نسخة تجريبية ولا تنشئ محفظة حقيقية. الكلمات التجريبية ليست عبارة استرداد. لا تدخل أو تحفظ أي عبارة سرية هنا.'
+                : 'This is a demo and does not create a real wallet. Demo words are not a recovery phrase. Never enter or store a real secret phrase here.'}
             </p>
-
-            <div className="relative p-4 bg-slate-950 rounded-xl border border-slate-800 mb-4">
-              {!showSeed ? (
-                <div className="flex flex-col items-center justify-center py-6 space-y-2">
-                  <Lock className="w-8 h-8 text-slate-600" />
-                  <span className="text-xs text-slate-400">
-                    {isAr ? 'الكلمات مشفرة ومحجوبة لأسباب أمنية' : 'Phrase is encrypted for safety'}
-                  </span>
-                  <button
-                    onClick={() => setShowSeed(true)}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>{isAr ? 'إظهار الكلمات' : 'Reveal Words'}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {seedWords.map((word, idx) => (
-                    <div key={idx} className="p-2 bg-slate-900 rounded border border-slate-800 text-xs font-mono text-center">
-                      <span className="text-slate-500 mr-1">{idx + 1}.</span>
-                      <span className="text-amber-300 font-bold">{word}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {showSeed && (
-              <button
-                onClick={() => setShowSeed(false)}
-                className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition"
-              >
-                {isAr ? 'إخفاء الكلمات مجدداً' : 'Hide Seed Phrase'}
-              </button>
-            )}
           </div>
         </div>
       )}
